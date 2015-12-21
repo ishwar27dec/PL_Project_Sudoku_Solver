@@ -14,7 +14,16 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 public class Driver {
+
+	public native String solve_sudoku_c(String puzzleInput);
+	static {
+		System.loadLibrary("sudokusolver");
+	}
 
 	private static String INPUT_STRING;
 	private static BufferedWriter OUT_WRITER = null;
@@ -124,7 +133,7 @@ public class Driver {
 		return true;
 	}
 
-	private void solve(int solveBy) throws IOException {
+	private void solve(int solveBy) throws Exception {
 		long startTime = System.currentTimeMillis();
 		long endTime, timeTaken;
 		String solvedPuzzle = "", solver = "";
@@ -170,7 +179,7 @@ public class Driver {
 
 	private String solvePython() {
 		echo(PYTHON_MESSAGE, true);
-		String outputString = "";
+		String solvedPuzzle = "";
 		try {
 			ProcessBuilder pb = new ProcessBuilder("python", "hexadoku.py", INPUT_STRING);
 			Process p = pb.start();
@@ -186,22 +195,29 @@ public class Driver {
 			int returnValue = p.waitFor();
 			if(returnValue == 0) { //Successful termination
 				for(int i = 0; i < outputList.size(); i++)
-					outputString += outputList.get(i);
+					solvedPuzzle += outputList.get(i);
 			} else {
 				echoError(PYTHON_INTEGRATION_ERROR);
 			}
 
 		} catch(Exception e) {
-			e.printStackTrace();
 			echoError(e.getMessage());
 		}
 		
-		return outputString;
+		return solvedPuzzle;
 	}
 
-	private String solveJS() {
+	private String solveJS() throws Exception {
 		echo(JS_MESSAGE, true);
-		return null;
+		ScriptEngineManager scriptManager = new ScriptEngineManager();
+		ScriptEngine engine = scriptManager.getEngineByName("JavaScript");
+		engine.eval(new FileReader("sudoku.js"));
+		
+		Invocable invocable = (Invocable) engine;
+		Object obj = engine.get("solve");
+		String solvedPuzzle = (String) invocable.invokeMethod(obj, "solve", INPUT_STRING);
+
+		return solvedPuzzle;
 	}
 
 	private String solveJava() {
@@ -212,6 +228,9 @@ public class Driver {
 	}
 
 	private void outputSolvedPuzzle(String solver, String solvedPuzzle, long timeTakenInMillis) throws IOException {
+		if(solvedPuzzle == null || solver == null)
+			return;
+
 		double thousand = 1000;
 		double timeTakenInSeconds = timeTakenInMillis / thousand;
 		String timeTakenMessage = TIME_TAKEN_MESSAGE + timeTakenInSeconds + " sec\n"; 
