@@ -31,6 +31,7 @@ package edu.binghamton.my.main;
 
 public class Hexadoku {
 	private String puzzleString;
+	private String solvedPuzzleString = "";
 
 	public Hexadoku(String inputPuzzle) {
 		this.puzzleString = inputPuzzle;
@@ -39,7 +40,7 @@ public class Hexadoku {
 	//String puzzle = "E......A..56.F8..65...E.18.F.03A3.7B..65.D...2..8.....B..34...5....07..19.....2.9B...2.0F7.8D..65.E7..FBD16.C....D.6.3..2.0..A.7....D.....C.287.73BE..9C0A82..6...A..1....7E.B9.29....0.64D...A.476..F.....A0..2B.C3A.5480...EF.DE9.0C2.4.F5..18F..5.B....19.4D3";
 	// Solve a puzzle.
 
-	void solve() {
+	String solve() {
 		int[][] puzzle = convertFromHexToDec(this.puzzleString);
 
 		// Create a new Dancing Links.
@@ -50,6 +51,9 @@ public class Hexadoku {
 
 		// Solve it.
 		dl.solve(this);
+
+		//Return the result
+		return this.solvedPuzzleString;
 	}
 
 	// Print a puzzle or solution.
@@ -106,22 +110,26 @@ public class Hexadoku {
 		return -1;
 	}
 
+	
 	void report(int[][] result) {
-		for (int i = 0; i < PUZZLE_SIDE; i++) {
+		for (int i = 0; i < PUZZLE_SIDE; i++)
 			for (int j = 0; j < PUZZLE_SIDE; j++)
-
-				// Print a '.' if empty.
+				this.solvedPuzzleString += Integer.toString(result[i][j], 16).toUpperCase();
+		
+		
+				/*// Print a '.' if empty.
 				if (result[i][j] < 0)
-					System.out.print(". ");
+					outputString += ".";
+					//System.out.print(". ");
 
 				// Else a hex digit in upper case.
 				else
-					System.out.print(Integer.toString(result[i][j], 16).toUpperCase() + " ");
+					outputString += Integer.toString(result[i][j], 16).toUpperCase();
 
-			System.out.println();
+			outputString += "\n";
 		}
 
-		System.out.println("-------------------------------");
+		System.out.println("-------------------------------");*/
 	}
 
 	///////////////////////////////////////////////////////////////////////////////

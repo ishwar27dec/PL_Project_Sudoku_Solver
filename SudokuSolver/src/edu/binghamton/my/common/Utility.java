@@ -1,6 +1,9 @@
 package edu.binghamton.my.common;
 
-import static edu.binghamton.my.common.Constants.BOARD_SIZE;;
+import static edu.binghamton.my.common.Constants.BOARD_SIZE;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utility {
 
@@ -15,19 +18,26 @@ public class Utility {
 		System.err.println(errorMessage);
 	}
 
-	public static void printSudokuBoard(String inputPuzzle) {
+	public static String getRepresentableSudokuBoard(String inputPuzzle) {
 		int index = 0;
+		List<String> data = new ArrayList<>();
 		for(int i = 0; i < BOARD_SIZE; i++) {
 			if (i % 4 == 0)
-                echo("+-------+-------+-------+-------+", true);
+                data.add("+-------+-------+-------+-------+\n");
 
 			for(int j = 0; j < BOARD_SIZE; j++) {
-                echo((j % 4 == 0 ? "|" : " "), false);
-				echo("" + inputPuzzle.charAt(index++), false);
+				data.add((j % 4 == 0 ? "|" : " "));
+				data.add(String.valueOf(inputPuzzle.charAt(index++)));
 			}
 
-			echo("|", true);
+			data.add("|\n");
 		}
-        echo("+-------+-------+-------+-------+", true);
+		data.add("+-------+-------+-------+-------+\n");
+		
+		String oneLineString = "";
+		for(int i = 0; i < data.size(); i++)
+			oneLineString += data.get(i);
+
+		return oneLineString;
 	}
 }

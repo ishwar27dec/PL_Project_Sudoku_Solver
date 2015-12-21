@@ -8,7 +8,7 @@ public class Constants {
 	public static final String CHOICE_MESSAGE = "Enter your choice: ";
 	public static final String END_MESSAGE = "\n**** End of Sudoku Solver ****";
 	public static final String ERROR_MESSAGE = "\nError occurred in Sudoku Solver: ";
-	public static final String ENTER_INPUT_MESSAGE = "Enter input string: ";
+	public static final String ENTER_INPUT_MESSAGE = "Enter input file: ";
 	public static final String INPUT_TAKEN_MESSAGE = "Input saved!";
 	public static final String SOLVE_SUB_MENU = "\n1. Java \n2. JavaScript \n3. Python \n4. C \n5. Prolog \n6. Main Menu";
 	public static final String SUB_MENU_TITLE_MESSAGE = "\n**** Sub Menu ****\n";
@@ -17,9 +17,10 @@ public class Constants {
 	public static final String PYTHON_MESSAGE = "\n**** SUDOKU SOLVER BY PYTHON ****\n";
 	public static final String C_MESSAGE = "\n**** SUDOKU SOLVER BY C ****\n";
 	public static final String PROLOG_MESSAGE = "\n**** SUDOKU SOLVER BY PROLOG ****\n";
-	public static final String TIME_TAKEN_MESSAGE = "\nTime Taken: ";
-
-
+	public static final String TIME_TAKEN_MESSAGE = "Time Taken: ";
+	public static final String FILE_READ_ERROR_MESSAGE = "\nError while reading input file. Please try again...\n";
+	public static final String ENTER_INPUT_PUZZLE_MESSAGE = "\nPlease enter the puzzle input first...\n";
+	public static final String PYTHON_INTEGRATION_ERROR = "\nError in python integration\n";
 
 
 
