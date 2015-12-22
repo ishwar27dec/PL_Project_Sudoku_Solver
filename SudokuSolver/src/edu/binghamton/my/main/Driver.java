@@ -20,10 +20,10 @@ import javax.script.ScriptEngineManager;
 
 public class Driver {
 
-	public native String solve_sudoku_c(String puzzleInput);
+	/*public native String solve_sudoku_c(String puzzleInput);
 	static {
 		System.loadLibrary("sudokusolver");
-	}
+	}*/
 
 	private static String INPUT_STRING;
 	private static BufferedWriter OUT_WRITER = null;
@@ -169,7 +169,46 @@ public class Driver {
 
 	private String solveProlog() {
 		echo(PROLOG_MESSAGE, true);
-		return null;
+		String solvedPuzzle = "";
+		try {
+			String inputString = getPrologInputString();
+			ProcessBuilder pb = new ProcessBuilder("swipl", "-s", "sudoku.pl", "-g", inputString, "-t", "halt", "--quiet");
+			Process p = pb.start();
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String output = "";
+
+			List<String> outputList = new ArrayList<>();
+			while ((output = reader.readLine()) != null) {
+				output = output.replaceAll("\\+", "").replaceAll("\\|", "").replaceAll("\\-", "").replaceAll(" ", "");
+				if (!"".equalsIgnoreCase(output))
+					outputList.add(output);
+			}
+
+			int returnValue = p.waitFor();
+			if (returnValue == 0) { // Successful termination
+				for (int i = 0; i < outputList.size(); i++)
+					solvedPuzzle += outputList.get(i);
+			} else {
+				echoError(PYTHON_INTEGRATION_ERROR);
+			}
+		} catch (Exception e) {
+			echoError(e.getMessage());
+			solvedPuzzle = null;
+		}
+
+		return solvedPuzzle;
+	}
+
+	private String getPrologInputString() {
+		String input  = "solve([#],X)";
+		String temp = "";
+		for(int i=0; i<INPUT_STRING.length(); i++)
+			temp += (INPUT_STRING.charAt(i) == '.' ? "_" : INPUT_STRING.charAt(i)) + ",";
+
+		temp = temp.substring(0, (temp.length() -1));
+
+		return input.replaceAll("#", temp);
 	}
 
 	private String solveC() {
@@ -183,6 +222,7 @@ public class Driver {
 		try {
 			ProcessBuilder pb = new ProcessBuilder("python", "hexadoku.py", INPUT_STRING);
 			Process p = pb.start();
+
 			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String output = "";
 			List<String> outputList = new ArrayList<>();
@@ -202,6 +242,7 @@ public class Driver {
 
 		} catch(Exception e) {
 			echoError(e.getMessage());
+			solvedPuzzle = null;
 		}
 		
 		return solvedPuzzle;
@@ -222,8 +263,14 @@ public class Driver {
 
 	private String solveJava() {
 		echo(JAVA_MESSAGE, true);
-		Hexadoku hexadoku = new Hexadoku(INPUT_STRING);
-		String solvedString = hexadoku.solve();
+		String solvedString = "";
+		try {
+			Hexadoku hexadoku = new Hexadoku(INPUT_STRING);
+			solvedString = hexadoku.solve();
+		} catch (Exception e) {
+			echoError(e.getMessage());
+			solvedString = null;
+		}
 		return solvedString;
 	}
 
